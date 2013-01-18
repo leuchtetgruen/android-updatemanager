@@ -23,6 +23,8 @@ This is how you do it:
 
 * That's it
 
+See `ExampleActivity.java` for a full example of how to use `UpdateManager`
+
 Here are some other nice features:
 
 - UpdateManager will only check for updates when on a WIFI-Network
