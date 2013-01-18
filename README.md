@@ -27,5 +27,6 @@ See `ExampleActivity.java` for a full example of how to use `UpdateManager`
 
 Here are some other nice features:
 
-- UpdateManager will only check for updates when on a WIFI-Network
-- You can also provide an initial version of your file in the assets folder and copy it when the update could not be loaded from the server (Use `copyFileFromAssets`)
+* UpdateManager will only check for updates when on a WIFI-Network
+	- You can change this behaviour by editing the `networkTypeMask` property in the `UpdateManager` class
+* You can also provide an initial version of your file in the assets folder and copy it when the update could not be loaded from the server (Use `copyFileFromAssets`)
