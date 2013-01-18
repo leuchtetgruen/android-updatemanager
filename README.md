@@ -11,6 +11,7 @@ the updated file.
 This is how you do it:
 
 * `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />` (As updating will not be done on cellular)
+* `<uses-permission android:name="android.permission.INTERNET" />`
 
 * Instantiate UpdateManager with the following data
 	- your Context
