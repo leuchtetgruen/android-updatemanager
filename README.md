@@ -22,6 +22,8 @@ This is how you do it:
 * Call checkForUpdate and provide an UpdateListener
 
 * That's it
+	* The downloaded file can be accessed via `Context.getFileStreamPath(...)` as it will be saved within your sandbox
+
 
 See `ExampleActivity.java` for a full example of how to use `UpdateManager`
 
