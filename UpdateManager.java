@@ -1,6 +1,5 @@
 package de.leuchtetgruen;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,9 +42,11 @@ public class UpdateManager {
 	private final static String PREFS_ETAG			= ".ETAG";
 	private final static String PREFS_LMOD			= ".LAST_MODIFIED";
 	private final static String PREFS_FSIZE			= ".FILESIZE";
-	private final static String DEFAULT_SP_VAL		= "$$foobar$$";	
+	private final static String DEFAULT_SP_VAL		= "$$foobar$$";
+	
+	public final static int DESIRED_NETWORK_TYPE_ANY = -1;
 
-	private int networkTypeMask = ConnectivityManager.TYPE_WIFI;
+	private int desiredNetworkType = ConnectivityManager.TYPE_WIFI;
 	
 
 	public UpdateManager(Context ctx, String strUrl, String targetFile, String prefsName) {
@@ -56,8 +57,8 @@ public class UpdateManager {
 		this.prefsName = prefsName;
 	}
 	
-	public void setNetworkTypeMask(int mask) {
-		this.networkTypeMask = mask;
+	public void setDesiredNetworkType(int desiredNetworkType) {
+		this.desiredNetworkType = desiredNetworkType;
 	}
 	
 	public void checkForUpdate(UpdateListener listener) {
@@ -67,7 +68,7 @@ public class UpdateManager {
 		if (networkInfo==null) {
 			listener.onErrorDownloadingUpdate(this);
 		}
-		else if ((networkInfo.getType() & this.networkTypeMask) == 0) {
+		else if ((networkInfo.getType() != this.desiredNetworkType) && (this.desiredNetworkType != DESIRED_NETWORK_TYPE_ANY)) {
 			listener.onNotAllowedToLoadUpdate(this);
 			return;
 		}
@@ -133,7 +134,7 @@ public class UpdateManager {
 		
 		if (updateListener!=null) runner.post(new Runnable() {
 			public void run() {
-				updateListener.onStartedDownloadingUodate(umgr);
+				updateListener.onStartedDownloadingUpdate(umgr);
 			}
 		});
 		
@@ -142,7 +143,7 @@ public class UpdateManager {
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
                 if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                    //long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                     Query query = new Query();
                     query.setFilterById(myDownloadId);
                     Cursor c = downloadManager.query(query);
@@ -152,7 +153,7 @@ public class UpdateManager {
                         int status = c.getInt(columnIndex);
                         if (DownloadManager.STATUS_SUCCESSFUL == status) {
  
-                            String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                            //String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                             ParcelFileDescriptor f;
 							try {
 								f = downloadManager.openDownloadedFile(myDownloadId);
@@ -193,8 +194,7 @@ public class UpdateManager {
 
 	private void copyToAppDir(Context ctx, InputStream in, String fileDest) {
 	   try{
-          
-          File f2 = new File(fileDest);          
+                 
           
           OutputStream out = ctx.openFileOutput(fileDest, Context.MODE_PRIVATE);
 
@@ -220,7 +220,6 @@ public class UpdateManager {
 			InputStream in = ctx.getAssets().open(strTargetFile);
 			copyToAppDir(ctx, in, strTargetFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
